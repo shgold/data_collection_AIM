@@ -1,2 +1,46 @@
 # data_collection_AIM
 This repository contains the scripts for collecting images and videos from three different cameras.
+
+## Objective
+The objective of collecting this dataset is to be used in the future image/video enhancement research, for example, image super resolution, video super resolution and etc. We are using three different cameras, Huawei P20, Canon EOS D5 Mark IV and ZED stereo camera, which represent smartphone camera, high-end DSLR camera and depth sensing camera respectively. 
+
+## Data collection setup
+We collect sets of images or videos from three different cameras such as Huawei P20, Canon EOS D5 Mark IV and ZED stereo camera. These cameras are fixed in a special rig (TODO: setup image), and all of the cameras are connected to the laptop through USB 3.0 port. The bluetooth mouse connected to the laptop will be a controller to command the shootings of all cameras.
+
+(TODO: Indicate how each camera is set (p20 developer mode, auto) (D5 auto) (ZED Ultra depth))
+
+By executing `exe_IMG_trigger_all.py` or `exe_VID_trigger_all.py`, all the devices will be triggered within the time differences of less than a second.
+
+## Requirements of computer(laptop)
+- Ubuntu 18.04 LTS
+- NVIDIA GPU with CUDA version 10.0 installed (necessary requirement to use ZED stereo camera)
+- NVIDIA driver version 410.104
+
+## Pre-installed libraries
+Some libraries should be installed to control cameras remotely from the scripts.
+
+We are using [gphoto2](http://www.gphoto.org/) to control Canon D5 Mark IV remotely.
+```
+$ sudo apt-get install gphoto2
+```
+We are using [adb](https://developer.android.com/studio/command-line/adb) to control Huawei P20 in the developer mode.
+```
+$ sudo apt-get install adb
+```
+We are using [ZED SDK 2.8](https://www.stereolabs.com/developers/release/#sdkdownloads_anchor) and [ZED python-API](https://github.com/stereolabs/zed-python-api) to run ZED stereo camera. 
+```
+Please follow the official instruction to install ZED software. 
+```
+The other libraries installed.
+- pynput(version 1.4.2) ` $ pip3 install pynput`
+- opencv(version 4.1.0) ` $ pip3 install opencv-python`
+- ffmpeg(version 3.4.6) ` $ sudo apt-get install ffmpeg`  and ` $ pip3 install ffmpeg-python`
+
+## Usage of the scripts
+(TODO: Explain)
+
+## Common troubleshootings
+(TODO: Explain)
+
+## Contributing
+Feel free to open an issue if you find a bug, or a pull request for bug fixes, features or other improvements.
