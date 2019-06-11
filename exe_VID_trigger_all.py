@@ -2,8 +2,9 @@ from pynput.mouse import Listener
 import os
 import time
 from multiprocessing import Pool, Process, cpu_count
+import argparse
 
-from utils.print_utils import yellow, cyan
+from utils.print_utils import yellow, cyan, red
 import utils.canon_utils as canon
 import utils.adb_utils as adb
 import utils.log_utils as logutils
@@ -13,12 +14,14 @@ __ZED_VID_PATH__ = "./saved_data/VID/{}/ZED".format(time.strftime('%Y%m%d'))
 __P20_VID_PATH__ = "./saved_data/VID/{}/P20".format(time.strftime('%Y%m%d'))
 
 __VID_LOGGING_FILE__ = "./saved_data/VID/{}/video_capture.log".format(time.strftime('%Y%m%d'))
-__VID_TIME__ = 10
+# __VID_TIME__ = 20
+
 
 def beep(count):
     for i in range(count):
         os.system('\a')
         time.sleep(0.2)
+
 
 def make_dir_if_not_exists(dir):
     if not os.path.exists(dir):
@@ -34,9 +37,9 @@ def capture_P20_video():
     starting_time = time.time()
     print('{} starting P20'.format(starting_time))
 
-    #adb.camera_focus()
+    # adb.camera_focus()
     adb.press_shutter_button()
-    #print('Start taking videos for {} seconds'.format(__VID_TIME__))
+    # print('Start taking videos for {} seconds'.format(__VID_TIME__))
     time.sleep(__VID_TIME__)
     adb.press_shutter_button()
 
@@ -74,7 +77,7 @@ def run_process4video(process):
     :return:
     '''
 
-    #os.system('python3 {}'.format(process))
+    # os.system('python3 {}'.format(process))
     if process == 'zed':
         os.system('python3 run_ZED.py --out_path {} --log_file {} --vid_time {}'.format(__ZED_VID_PATH__, __VID_LOGGING_FILE__, __VID_TIME__))
 
@@ -98,7 +101,7 @@ def on_click_run(x, y, button, pressed):
             vid_logger.info('=====START=====')
             print('In video recording mode: ')
 
-            processes = ['zed', 'D5', 'p20']
+            # processes = ['zed', 'D5', 'p20']
             pool = Pool(processes=len(processes))
             pool.map(run_process4video, processes)
 
@@ -112,6 +115,27 @@ def on_click_run(x, y, button, pressed):
 
 
 if __name__ == '__main__':
+    global __VID_TIME__, processes
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--vid_time", default =20, type=int, help="A period of time(in seconds) of video recording.")
+    parser.add_argument("--p20", action="store_true", default=False, help="When indicated, Huawei P20 will run.")
+    parser.add_argument("--d5", action="store_true", default=False, help="When indicated, Canon D5 Mark IV will run.")
+    parser.add_argument("--zed", action="store_true", default=False, help="When indicated, ZED will run.")
+    args = parser.parse_args()
+
+    __VID_TIME__ = args.vid_time
+    processes = []
+    if args.zed:
+        processes.append('zed')
+    if args.p20:
+        processes.append('p20')
+    if args.d5:
+        processes.append('D5')
+
+    if len(processes) == 0:
+        print(red('Select at least one device to run: --p20 / --zed / --d5'))
+        exit(-1)
 
     print('Starting')
     make_dir_if_not_exists(__ZED_VID_PATH__)

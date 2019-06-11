@@ -2,11 +2,12 @@ from pynput.mouse import Listener
 import os
 import time
 from multiprocessing import Pool, Process
-from utils.print_utils import yellow, cyan
+from utils.print_utils import yellow, cyan, red
 import utils.canon_utils as canon
 import utils.zed_utils as zutils
 import utils.adb_utils as adb
 import utils.log_utils as logutils
+import argparse
 
 import pyzed.sl as sl
 
@@ -113,6 +114,26 @@ def capture_D5_image():
 
 
 if __name__ == '__main__':
+    global processes
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--p20", action="store_true", default=False, help="When indicated, Huawei P20 will run.")
+    parser.add_argument("--d5", action="store_true", default=False, help="When indicated, Canon D5 Mark IV will run.")
+    parser.add_argument("--zed", action="store_true", default=False, help="When indicated, ZED will run.")
+    args = parser.parse_args()
+
+    processes = []
+    if args.zed:
+        processes.append('zed')
+    if args.p20:
+        processes.append('p20')
+    if args.d5:
+        processes.append('D5')
+
+    if len(processes) == 0:
+        print(red('[Error] Select at least one device to run: --p20 / --zed / --d5'))
+        exit(-1)
+
     print('Starting')
     make_dir_if_not_exists(__ZED_IMG_PATH__)
     make_dir_if_not_exists(__P20_IMG_PATH__)
