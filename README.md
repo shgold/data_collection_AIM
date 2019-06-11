@@ -63,6 +63,61 @@ In order to capture images, first set up the devices properly and make sure that
   When capturing is finished, click mouse RIGHT button and wait until another alarms go off. 
   > Make sure you use mouse buttons to turn off the program so that files can be downloaded properly from Huawei P20.
 
+## Saved data structure
+All the recorded data will be saved in the `saved_data` folder in the same directory of this repository. 
+The structure of the data will be like following. 
+
+
+    saved_data
+    |
+    ├── IMG 
+    │   ├── 20190610                              # Date of data collection
+    |   │   ├── D5                                # Images captured from Canon D5 Mark IV 
+    |   |   |   ├── CD5_0123.CR2                  # Raw image
+    |   |   |   ├── CD5_0123.JPG                  # JPEG image
+    |   |   |   └── ...
+    │   |   ├── P20                               # Images captured from Huawei P20
+    |   |   |   ├── RAW                           # Raw image folder
+    |   |   |   |   ├── IMG_20190610_122402.dng
+    |   |   |   |   └── ...
+    |   |   |   ├── IMG_20190610_122402.jpg        # JPEG image
+    |   |   |   └── ...
+    |   |   ├── ZED                                # Images captured from ZED stereo camera
+    |   |   |   ├── 1560170958                     # ZED images folder
+    |   |   |   |   ├── rgb_image.png              # RGB image(left/right/unrectified)
+    |   |   |   |   ├── depth_image.png            # Depth image(left/right/confidence)
+    |   |   |   |   ├── zed_param.txt              # Parameters of the ZED camera when taking the image
+    |   |   |   |   └── ...
+    |   |   |   └── ...
+    |   |   └── image_capture.log                  # Log file of the captured data in one day
+    │   ├── 20190611         
+    │   └── ...          
+    |
+    ├── VID                    
+    │   ├── 20190610                              # Date of data collection
+    |   │   ├── D5                                # Images captured from Canon D5 Mark IV 
+    |   |   |   ├── CD5_0123.CR2                  # Raw image
+    |   |   |   ├── CD5_0123.JPG                  # JPEG image
+    |   |   |   └── ...
+    │   |   ├── P20                               # Images captured from Huawei P20
+    |   |   |   ├── RAW                           # Raw image folder
+    |   |   |   |   ├── IMG_20190610_122402.dng
+    |   |   |   |   └── ...
+    |   |   |   ├── IMG_20190610_122402.jpg        # JPEG image
+    |   |   |   └── ...
+    |   |   ├── ZED                                # Images captured from ZED stereo camera
+    |   |   |   ├── 1560170958                     # ZED images folder
+    |   |   |   |   ├── rgb_image.png              # RGB image(left/right/unrectified)
+    |   |   |   |   ├── depth_image.png            # Depth image(left/right/confidence)
+    |   |   |   |   ├── zed_param.txt              # Parameters of the ZED camera when taking the image
+    |   |   |   |   └── ...
+    |   |   |   └── ...
+    |   |   └── image_capture.log                  # Log file of the captured data in one day
+    │   ├── 20190611         # End-to-end, integration tests (alternatively `e2e`)    
+    │   └── ...              
+    └── ...
+
+
 ## Common troubleshootings
 #### 1. Check all devices are ON and in the right mode
 When the device is not turned on nor on the right mode(for example, running video recording scripts when cameras are on the photo taking mode or vice versa), the capturing process won't work properly. 
