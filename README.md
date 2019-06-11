@@ -37,7 +37,31 @@ The other libraries installed.
 - ffmpeg(version 3.4.6) ` $ sudo apt-get install ffmpeg`  and ` $ pip3 install ffmpeg-python`
 
 ## Usage of the scripts
-(TODO: Explain)
+#### 1. Capture images
+
+In order to capture images, first set up the devices properly and make sure that they are on the right mode for capturing. (For example, we set Huawei P20 camera app in an PRO mode and Canon D5 Mark IV in an AUTO mode.)
+
+  Then you can run, 
+  ```
+  $ python3 exe_IMG_trigger_all.py
+  ```
+  When the script is running, click mouse LEFT button to trigger the cameras. Once the capturing is finished the alarm will go off and it is ready to take next images.
+
+  When capturing is finished, click mouse RIGHT button and wait until another alarms go off. 
+  > Make sure you use mouse buttons to turn off the program so that files can be downloaded properly from Huawei P20.
+
+#### 2. Record videos
+
+  In order to capture videos, first set up the devices properly and make sure that they are on the right mode for recording. (For example, we set Huawei P20 camera app in an VIDEO mode and Canon D5 Mark IV in an AUTO video recording mode.)
+
+  Then you can run,
+  ```
+  $ python3 exe_VID_trigger_all.py
+  ```
+  When the script is running, click mouse LEFT button to trigger the cameras. Once the recording is finished the alarm will go off and it is ready to take next videos. The default of recording period is set to 20 seconds.
+  
+  When capturing is finished, click mouse RIGHT button and wait until another alarms go off. 
+  > Make sure you use mouse buttons to turn off the program so that files can be downloaded properly from Huawei P20.
 
 ## Common troubleshootings
 (TODO: Explain)
