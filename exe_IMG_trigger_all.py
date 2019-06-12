@@ -57,7 +57,6 @@ def run_process4image(process):
 
 
 def on_click_run(x, y, button, pressed):
-    global count_click
 
     if pressed:
         print('{0} {1} at {2}'.format('Pressed' if pressed else 'Released', button, (x, y)))
@@ -66,7 +65,6 @@ def on_click_run(x, y, button, pressed):
             img_logger.info('=====START=====')
             print('In image capturing mode')
 
-            processes = ['zed', 'D5', 'p20']
             pool = Pool(processes=len(processes))
             pool.map(run_process4image, processes)
 
@@ -89,12 +87,14 @@ def capture_P20_image():
 
     adb.camera_focus()
     adb.press_shutter_button()
-    # Download files captured from P20
-    adb.transfer_media_files(__P20_IMG_PATH__)
-
     devtime = adb.get_device_time()
-    img_name = adb.get_img_name()
-    img_logger.info('IMAGE:P20::{}:{}'.format(devtime, img_name))
+    time.sleep(0.2)
+
+    # Download files captured from P20
+    img_name = adb.download_image_files(__P20_IMG_PATH__)
+
+    if img_name is not None:
+        img_logger.info('IMAGE:P20::{}:{}:{}'.format(devtime, img_name[0]+'.jpg', img_name[1]+'.dng')) # img_name =[jpg, raw]
 
     time_period = time.time() - starting_time
     print('[{:.3f}s] exiting P20'.format(time_period))
@@ -122,7 +122,7 @@ if __name__ == '__main__':
     global processes, __ADJUST_TIME__
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--zed_rest", default= 5, help='A period of time(in seconds) to adjust on the lighting environment for ZED camera.')
+    parser.add_argument("--zed_rest", default= 5, type=int, help='A period of time(in seconds) to adjust on the lighting environment for ZED camera.')
     parser.add_argument("--p20", action="store_true", default=False, help="When indicated, Huawei P20 will run.")
     parser.add_argument("--d5", action="store_true", default=False, help="When indicated, Canon D5 Mark IV will run.")
     parser.add_argument("--zed", action="store_true", default=False, help="When indicated, ZED will run.")
@@ -141,7 +141,12 @@ if __name__ == '__main__':
         print(red('[Error] Select at least one device to run: --p20 / --zed / --d5'))
         exit(-1)
 
-    print('Starting')
+    print(cyan('============== Selected Devices ================'))
+    print(cyan('{}'.format(processes)))
+    print(cyan('==================== Guide ====================='))
+    print(cyan('Mouse LEFT click to record videos.'))
+    print(cyan('Mouse RIGHT click to exit the program.'))
+
     make_dir_if_not_exists(__ZED_IMG_PATH__)
     make_dir_if_not_exists(__P20_IMG_PATH__)
     make_dir_if_not_exists(__D5_IMG_PATH__)
@@ -153,9 +158,6 @@ if __name__ == '__main__':
     canon.killGphoto2Process()
 
     print(yellow('Make sure that all the devices are on and at the right mode!'))
-    print(cyan('============== Guide ================'))
-    print(cyan('Mouse LEFT click to record videos.'))
-    print(cyan('Mouse RIGHT click to exit the program.'))
 
     # Collect events until released
     with Listener(on_click=on_click_run) as listener:

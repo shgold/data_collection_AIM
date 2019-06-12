@@ -1,6 +1,7 @@
 import os
-from subprocess import check_output, call
-from time import clock, sleep
+from subprocess import check_output, call, Popen
+from subprocess import DEVNULL
+from time import clock, sleep, time
 
 __CAMERA_PATH__ = '/storage/emulated/0/DCIM/Camera/'
 __SENSOR_LOG_PATH__ = '/storage/sdcard0/MySensorStreams/'
@@ -104,13 +105,61 @@ def press_shutter_button():
     if DEBUG: print('[p20] press_camera_button'.ljust(20), clock())
     call(['adb', 'shell', 'input', 'keyevent', 'KEYCODE_CAMERA'])
 
-
-def transfer_media_files(path):
+def download_video_file(path):
     # looking for last file in DCIM/Camera: NO NEED cause we just have 1 picture (clear folder before capture)
     # copy to PC: adb pull /sdcard/DCIM/Camera/ c:/temp
     if DEBUG: print('screen transfer_img'.ljust(20), clock())
     while 1:
-        file = check_if_file_exist(__CAMERA_PATH__)
+        files = check_output(['adb', 'shell', 'ls', '/storage/emulated/0/DCIM/Camera/*'])
+        files = files.strip().decode('utf-8')
+        filename = os.path.basename(files)
+        if filename[-3:] == 'mp4':
+            r = check_output(['adb', 'pull', os.path.join(__CAMERA_PATH__, filename), path])
+            return filename
+
+def download_image_files(path, timeout=3):
+    # looking for last file in DCIM/Camera: NO NEED cause we just have 1 picture (clear folder before capture)
+    # copy to PC: adb pull /sdcard/DCIM/Camera/ c:/temp
+    if DEBUG: print('screen transfer_img'.ljust(20), clock())
+    jpg_filename = None
+    raw_filename = None
+    start = time()
+    while time() - start < timeout:
+        if jpg_filename is None:
+            try:
+                files = check_output(['adb', 'shell', 'ls', '/storage/sdcard0/DCIM/Camera/*.jpg'], stderr=DEVNULL)
+                print('check;', files.strip())
+            except:
+                continue
+
+            jpg_filename = os.path.basename(files.strip().decode('utf-8').split('.jpg')[0])
+            print('jpg', jpg_filename)
+
+        if raw_filename is None:
+            try:
+                files = check_output(['adb', 'shell', 'ls', '/storage/sdcard0/DCIM/Camera/RAW/*.dng'], stderr=DEVNULL)
+                print('check;', files.strip())
+            except:
+                continue
+
+            raw_filename = os.path.basename(files.strip().decode('utf-8').split('.dng')[0])
+            print('raw', raw_filename)
+
+        if jpg_filename is not None and raw_filename is not None:
+            try:
+                r = call(['adb', 'pull', os.path.join(__CAMERA_PATH__, jpg_filename + '.jpg'), path], stdout=DEVNULL)
+                r = call(['adb', 'pull', os.path.join(__CAMERA_PATH__, 'RAW', raw_filename + '.dng'), path], stdout=DEVNULL)
+                return [jpg_filename, raw_filename]
+            except:
+                continue
+    return None
+
+def transfer_media_files_old_version(path):
+    # looking for last file in DCIM/Camera: NO NEED cause we just have 1 picture (clear folder before capture)
+    # copy to PC: adb pull /sdcard/DCIM/Camera/ c:/temp
+    if DEBUG: print('screen transfer_img'.ljust(20), clock())
+    while 1:
+        file = check_if_file_exist(os.path.join(__CAMERA_PATH__))
         if file is not None:
             r = check_output(['adb', 'pull', __CAMERA_PATH__, path])
             if DEBUG: print(r.strip())

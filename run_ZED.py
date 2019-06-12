@@ -21,12 +21,14 @@ if __name__ == '__main__':
         __VID_LOGGING_FILE__ = args.log_file
         __ADJUST_TIME__ = int(args.adjust_time)
 
-
         # Create logger
         img_logger = logutils.create_logger(__VID_LOGGING_FILE__)
 
         # Configure zed camera
         zed, runtime = zutils.configure_zed_camera()
+
+        # Time to adjust ZED camera to the lights
+        time.sleep(__ADJUST_TIME__)
 
         if zed.grab(runtime) == sl.ERROR_CODE.SUCCESS:
             starting_time = time.time()
