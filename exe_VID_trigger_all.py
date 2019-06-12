@@ -43,6 +43,9 @@ def capture_P20_video():
     time.sleep(__VID_TIME__)
     adb.press_shutter_button()
 
+    # Download files captured from P20
+    adb.transfer_media_files(__P20_VID_PATH__)
+
     devtime = adb.get_device_time()
     vid_name = adb.get_vid_name()
     vid_logger.info('VIDEO:P20:{}:{}'.format(devtime, vid_name+'.mp4'))
@@ -79,14 +82,18 @@ def run_process4video(process):
 
     # os.system('python3 {}'.format(process))
     if process == 'zed':
-        os.system('python3 run_ZED.py --out_path {} --log_file {} --vid_time {}'.format(__ZED_VID_PATH__, __VID_LOGGING_FILE__, __VID_TIME__))
+        os.system('python3 run_ZED.py --out_path {} --log_file {} --adjust_time {} --vid_time {}'.format(
+                    __ZED_VID_PATH__, __VID_LOGGING_FILE__, __ADJUST_TIME__, __VID_TIME__))
 
     elif process == 'p20':
-        time.sleep(0.5)
+
+        # Clean P20 camera folder
+        adb.clean_camera_folder()
+        time.sleep(__ADJUST_TIME__ + 0.5)
         capture_P20_video()
 
     elif process == 'D5':
-        time.sleep(1)
+        time.sleep(__ADJUST_TIME__ + 1)
         capture_D5_video()
     else:
         print('nothing to run')
@@ -115,16 +122,18 @@ def on_click_run(x, y, button, pressed):
 
 
 if __name__ == '__main__':
-    global __VID_TIME__, processes
+    global __VID_TIME__, processes, __ADJUST_TIME__
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--vid_time", default =20, type=int, help="A period of time(in seconds) of video recording.")
+    parser.add_argument("--zed_rest", default= 5, type=int,  help='A period of time(in seconds) to adjust on the lighting environment for ZED camera.')
     parser.add_argument("--p20", action="store_true", default=False, help="When indicated, Huawei P20 will run.")
     parser.add_argument("--d5", action="store_true", default=False, help="When indicated, Canon D5 Mark IV will run.")
     parser.add_argument("--zed", action="store_true", default=False, help="When indicated, ZED will run.")
     args = parser.parse_args()
 
     __VID_TIME__ = args.vid_time
+    __ADJUST_TIME__ = args.zed_rest
     processes = []
     if args.zed:
         processes.append('zed')
@@ -137,7 +146,13 @@ if __name__ == '__main__':
         print(red('Select at least one device to run: --p20 / --zed / --d5'))
         exit(-1)
 
-    print('Starting')
+    print(cyan('============== Selected Devices ================'))
+    print(cyan('{}'.format(processes)))
+    print(cyan('==================== Guide ====================='))
+    print(cyan('Mouse LEFT click to record videos.'))
+    print(cyan('Mouse RIGHT click to exit the program.'))
+
+
     make_dir_if_not_exists(__ZED_VID_PATH__)
     make_dir_if_not_exists(__P20_VID_PATH__)
     make_dir_if_not_exists(__D5_VID_PATH__)
@@ -145,23 +160,14 @@ if __name__ == '__main__':
     # Create logger
     vid_logger = logutils.create_logger(__VID_LOGGING_FILE__)
 
-    # Clean P20 camera folder
-    adb.clean_camera_folder()
-
     # Kill the process which blocks the camera connection
     canon.killGphoto2Process()
 
     print(yellow('Make sure that all the devices are on and at the right mode!'))
-    print(cyan('============== Guide ================'))
-    print(cyan('Mouse LEFT click to record videos.'))
-    print(cyan('Mouse RIGHT click to exit the program.'))
 
     # Collect events until released
     with Listener(on_click=on_click_run) as listener:
         listener.join()
-
-    # Download files captured from P20
-    adb.transfer_media_files(__P20_VID_PATH__)
 
     # Alarm that this program is closed.
     beep(3)

@@ -39,14 +39,17 @@ def run_process4image(process):
 
     #os.system('python3 {}'.format(process))
     if process == 'zed':
-        os.system('python3 run_ZED.py --out_path {} --log_file {}'.format(__ZED_IMG_PATH__, __VID_LOGGING_FILE__))
+        os.system('python3 run_ZED.py --out_path {} --log_file {} --adjust_time {}'.format(
+                    __ZED_IMG_PATH__, __VID_LOGGING_FILE__, __ADJUST_TIME__))
 
     elif process == 'p20':
-        time.sleep(0.3) # change the time according to the situation
+        # Clean P20 camera folder
+        adb.clean_camera_folder()
+        time.sleep(__ADJUST_TIME__+0.3) # change the time according to the situation
         capture_P20_image()
 
     elif process == 'D5':
-        time.sleep(0.5) # change the time according to the situation
+        time.sleep(__ADJUST_TIME__+0.5) # change the time according to the situation
         capture_D5_image()
     else:
         print('nothing to run')
@@ -86,6 +89,8 @@ def capture_P20_image():
 
     adb.camera_focus()
     adb.press_shutter_button()
+    # Download files captured from P20
+    adb.transfer_media_files(__P20_IMG_PATH__)
 
     devtime = adb.get_device_time()
     img_name = adb.get_img_name()
@@ -114,14 +119,16 @@ def capture_D5_image():
 
 
 if __name__ == '__main__':
-    global processes
+    global processes, __ADJUST_TIME__
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("--zed_rest", default= 5, help='A period of time(in seconds) to adjust on the lighting environment for ZED camera.')
     parser.add_argument("--p20", action="store_true", default=False, help="When indicated, Huawei P20 will run.")
     parser.add_argument("--d5", action="store_true", default=False, help="When indicated, Canon D5 Mark IV will run.")
     parser.add_argument("--zed", action="store_true", default=False, help="When indicated, ZED will run.")
     args = parser.parse_args()
 
+    __ADJUST_TIME__ = args.zed_rest
     processes = []
     if args.zed:
         processes.append('zed')
@@ -142,9 +149,6 @@ if __name__ == '__main__':
     # Create logger
     img_logger = logutils.create_logger(__VID_LOGGING_FILE__)
 
-    # Clean P20 camera folder
-    adb.clean_camera_folder()
-
     # Kill the process which blocks the camera connection
     canon.killGphoto2Process()
 
@@ -156,9 +160,6 @@ if __name__ == '__main__':
     # Collect events until released
     with Listener(on_click=on_click_run) as listener:
         listener.join()
-
-    # Download files captured from P20
-    adb.transfer_media_files(__P20_IMG_PATH__)
 
     # Alarm that this program is closed.
     beep(3)

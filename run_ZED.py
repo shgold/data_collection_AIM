@@ -10,6 +10,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--out_path", help="folder to save the captured zed image or recorded zed video")
     parser.add_argument("--log_file", help="path to save the log file")
+    parser.add_argument("--adjust_time", default= 5, help='A period of time(in seconds) to adjust on the lighting environment when opened.')
     parser.add_argument("--vid_time", default =None, help="A period of time(in seconds) of video recording. "
                                                           "When not specified(default=None), it will capture the zed image.")
     args = parser.parse_args()
@@ -18,6 +19,8 @@ if __name__ == '__main__':
         # Set parameters
         __ZED_IMG_PATH__ = args.out_path
         __VID_LOGGING_FILE__ = args.log_file
+        __ADJUST_TIME__ = int(args.adjust_time)
+
 
         # Create logger
         img_logger = logutils.create_logger(__VID_LOGGING_FILE__)
@@ -53,6 +56,7 @@ if __name__ == '__main__':
         __ZED_VID_PATH__ = args.out_path
         __VID_LOGGING_FILE__ = args.log_file
         __VID_TIME__ = int(args.vid_time)
+        __ADJUST_TIME__ = int(args.adjust_time)
 
         # Create logger
         vid_logger = logutils.create_logger(__VID_LOGGING_FILE__)
@@ -68,6 +72,9 @@ if __name__ == '__main__':
         if err != sl.ERROR_CODE.SUCCESS:
             print(repr(err))
             exit(-1)
+
+        # Time to adjust ZED camera to the lights
+        time.sleep(__ADJUST_TIME__)
 
         starting_time = time.time()
         print('{} starting zed'.format(starting_time))
