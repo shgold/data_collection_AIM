@@ -50,7 +50,7 @@ def capture_P20_video():
     # Download files captured from P20
     vid_name = adb.download_video_file(__P20_VID_PATH__)
 
-    vid_logger.info('VIDEO:P20:{}:{}'.format(devtime, vid_name)) #vid_name+'.mp4'))
+    vid_logger.info('VIDEO:P20:{}:{}'.format(devtime, vid_name+'.mp4')) #vid_name+'.mp4'))
 
     time_period = time.time() - starting_time
     print('[{:.3f}s] exiting P20'.format(time_period))

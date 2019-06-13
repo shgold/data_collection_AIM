@@ -38,8 +38,9 @@ def read_log_file(log_file, file_dir, is_video=False):
                     if 'VIDEO:D5' in line:
                         d5_dir = os.path.join(file_dir, 'D5/{}'.format(last_entry[:-1]))
                     if 'VIDEO:P20' in line:
-                        p20_file_name = last_entry[:-1]
-                        p20_dir = check_p20_file_directory(p20_file_name, file_dir, is_video)
+                        p20_dir = os.path.join(file_dir, 'P20/{}'.format(last_entry[:-1]))
+                        #p20_file_name = last_entry[:-1]
+                        #p20_dir = check_p20_file_directory(p20_file_name, file_dir, is_video)
                         #p20_dir = os.path.join(file_dir, 'P20/Camera/{}.mp4'.format(last_entry[:-1]))
 
                     if 'VIDEO:ZED' in line:

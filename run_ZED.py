@@ -66,6 +66,9 @@ if __name__ == '__main__':
         # Configure zed camera
         zed, runtime = zutils.configure_zed_camera()
 
+        # Time to adjust ZED camera to the lights
+        time.sleep(__ADJUST_TIME__)
+
         # Enable video recording
         zed_vid_name = 'ZED_VID_{}.svo'.format(time.strftime('%Y%m%d%H%M%S'))
         err = zed.enable_recording(os.path.join(__ZED_VID_PATH__, zed_vid_name),
@@ -74,9 +77,6 @@ if __name__ == '__main__':
         if err != sl.ERROR_CODE.SUCCESS:
             print(repr(err))
             exit(-1)
-
-        # Time to adjust ZED camera to the lights
-        time.sleep(__ADJUST_TIME__)
 
         starting_time = time.time()
         print('{} starting zed'.format(starting_time))
