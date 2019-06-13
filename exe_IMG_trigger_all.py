@@ -88,7 +88,6 @@ def capture_P20_image():
     adb.camera_focus()
     adb.press_shutter_button()
     devtime = adb.get_device_time()
-    time.sleep(0.2)
 
     # Download files captured from P20
     img_name = adb.download_image_files(__P20_IMG_PATH__)

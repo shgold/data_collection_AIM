@@ -117,7 +117,7 @@ def download_video_file(path):
             r = check_output(['adb', 'pull', os.path.join(__CAMERA_PATH__, filename), path])
             return filename
 
-def download_image_files(path, timeout=3):
+def download_image_files(path, timeout=5):
     # looking for last file in DCIM/Camera: NO NEED cause we just have 1 picture (clear folder before capture)
     # copy to PC: adb pull /sdcard/DCIM/Camera/ c:/temp
     if DEBUG: print('screen transfer_img'.ljust(20), clock())
@@ -128,22 +128,22 @@ def download_image_files(path, timeout=3):
         if jpg_filename is None:
             try:
                 files = check_output(['adb', 'shell', 'ls', '/storage/sdcard0/DCIM/Camera/*.jpg'], stderr=DEVNULL)
-                print('check;', files.strip())
+                #print('check;', files.strip())
             except:
                 continue
 
             jpg_filename = os.path.basename(files.strip().decode('utf-8').split('.jpg')[0])
-            print('jpg', jpg_filename)
+            #print('jpg', jpg_filename)
 
         if raw_filename is None:
             try:
                 files = check_output(['adb', 'shell', 'ls', '/storage/sdcard0/DCIM/Camera/RAW/*.dng'], stderr=DEVNULL)
-                print('check;', files.strip())
+                #print('check;', files.strip())
             except:
                 continue
 
             raw_filename = os.path.basename(files.strip().decode('utf-8').split('.dng')[0])
-            print('raw', raw_filename)
+            #print('raw', raw_filename)
 
         if jpg_filename is not None and raw_filename is not None:
             try:
