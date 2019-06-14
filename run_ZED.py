@@ -64,7 +64,7 @@ if __name__ == '__main__':
         vid_logger = logutils.create_logger(__VID_LOGGING_FILE__)
 
         # Configure zed camera
-        zed, runtime = zutils.configure_zed_camera()
+        zed, runtime = zutils.configure_zed_camera(depth_mode=None)
 
         # Time to adjust ZED camera to the lights
         time.sleep(__ADJUST_TIME__)
@@ -84,7 +84,7 @@ if __name__ == '__main__':
         # Start recording videos
         while time.time() - starting_time <= __VID_TIME__:      # for frame_counts in range(30*__VID_TIME__+1):
             if zed.grab(runtime) == sl.ERROR_CODE.SUCCESS:
-                # print('Current frame fps:', zed.get_current_fps())
+                print('Current frame fps:', zed.get_current_fps())
                 zed.record()
 
         # Stop recording

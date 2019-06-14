@@ -15,40 +15,48 @@ import cv2
 # depth_format = sl.DEPTH_FORMAT.DEPTH_FORMAT_PNG
 
 
-def configure_zed_camera():
+def configure_zed_camera(depth_mode='ultra', svo_file=None):
     # Create a Camera object
     zed = sl.Camera()
 
     # Create a InitParameters object and set configuration parameters
-    init_params = sl.InitParameters(camera_resolution=sl.RESOLUTION.RESOLUTION_HD1080,
-                                    camera_fps=30,
-                                    coordinate_units=sl.UNIT.UNIT_MILLIMETER,
+    init_params = sl.InitParameters()
+    init_params.camera_resolution=sl.RESOLUTION.RESOLUTION_HD2K
+    #init_params.camera_fps=30
+    init_params.coordinate_units=sl.UNIT.UNIT_MILLIMETER
                                     # coordinate_system=sl.COORDINATE_SYSTEM.COORDINATE_SYSTEM_RIGHT_HANDED_Y_UP,
-                                    depth_mode=sl.DEPTH_MODE.DEPTH_MODE_ULTRA,
-                                    camera_disable_self_calib= False,
-                                    depth_minimum_distance=0.5, #in meter
-                                    enable_right_side_measure = True,
-                                    sdk_verbose=True)
+    init_params.camera_disable_self_calib = False
+    init_params.depth_minimum_distance=0.5 #in meter
+    init_params.enable_right_side_measure = True
+    init_params.sdk_verbose=True
 
+    if depth_mode is None:
+        init_params.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_NONE
+    else:
+        init_params.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
+
+    if svo_file is not None:
+        init_params.svo_input_filename = str(svo_file)
+        init_params.svo_real_time_mode = False  # Don't convert in realtime
 
     # Open the camera
     err = zed.open(init_params)
     if err != sl.ERROR_CODE.SUCCESS:
         exit(1)
 
-    # Positional tracking needs to be enabled before using spatial mapping
-    transform = sl.Transform()
-    tracking_parameters=sl.TrackingParameters(transform)
-    err = zed.enable_tracking(tracking_parameters)
-    if err != sl.ERROR_CODE.SUCCESS :
-        exit(-1)
+    if depth_mode is not None:
+        # Positional tracking needs to be enabled before using spatial mapping
+        transform = sl.Transform()
+        tracking_parameters=sl.TrackingParameters(transform)
+        err = zed.enable_tracking(tracking_parameters)
+        if err != sl.ERROR_CODE.SUCCESS :
+            exit(-1)
 
-    # Enable spatial mapping
-    mapping_parameters=sl.SpatialMappingParameters()
-    err = zed.enable_spatial_mapping(mapping_parameters)
-    if err != sl.ERROR_CODE.SUCCESS :
-        exit(-1)
-
+        # Enable spatial mapping
+        mapping_parameters=sl.SpatialMappingParameters()
+        err = zed.enable_spatial_mapping(mapping_parameters)
+        if err != sl.ERROR_CODE.SUCCESS :
+            exit(-1)
 
     # Get camera information (ZED serial number)
     zed_serial = zed.get_camera_information().serial_number
@@ -58,7 +66,6 @@ def configure_zed_camera():
     runtime = sl.RuntimeParameters()
     runtime.sensing_mode = sl.SENSING_MODE.SENSING_MODE_STANDARD
     runtime.measure3D_reference_frame = sl.REFERENCE_FRAME.REFERENCE_FRAME_WORLD
-
 
     return zed, runtime
 

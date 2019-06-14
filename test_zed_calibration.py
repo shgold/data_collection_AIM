@@ -94,27 +94,38 @@ if __name__ == '__main__':
     print('Starting...')
 
     # Configure zed camera
-    zed, runtime = zutils.configure_zed_camera()
+    zed, runtime = zutils.configure_zed_camera(svo_file='../zed_vid2k_20s_depthmodeNone2.svo')
 
     cv2.namedWindow('rgb', cv2.WINDOW_NORMAL)
     cv2.namedWindow('depth', cv2.WINDOW_NORMAL)
     cv2.setMouseCallback('rgb', measure_depth)
 
+    count = 0
     key =' '
     while key != 113:
         if zed.grab(runtime) == sl.ERROR_CODE.SUCCESS:
 
 
+            depth_sl_left16 = sl.Mat()
+            saved_left = zed.retrieve_measure(depth_sl_left16, sl.MEASURE.MEASURE_DEPTH)
+            depth_left16 = depth_sl_left16.get_data().astype(np.uint16)
+
+
             depth_sl_left = sl.Mat()
-            saved_left = zed.retrieve_measure(depth_sl_left, sl.MEASURE.MEASURE_DEPTH)
-            depth_cv_left = depth_sl_left.get_data().astype(np.uint16)
+            zed.retrieve_image(depth_sl_left, sl.VIEW.VIEW_DEPTH)
+            depth_cv_left = depth_sl_left.get_data()
 
             rgb_sl_left =sl.Mat()
-            saved_rgbleft = zed.retrieve_image(rgb_sl_left, sl.VIEW.VIEW_LEFT)
+            saved_rgbleft = zed.retrieve_image(rgb_sl_left, sl.VIEW.VIEW_RIGHT)
             rgb_cv_left = rgb_sl_left.get_data()
+            print(depth_left16.shape)
 
             cv2.imshow('rgb', rgb_cv_left)
-            cv2.imshow('depth', depth_cv_left)
+            cv2.imshow('depth', depth_left16)
+            count+=1
+            #zutils.save_unrectified_rgb_image(zed, '../test/unrectified/{}'.format(count))
+            zutils.save_rgb_image(zed, '../test/rectified/{}'.format(count))
+            #zutils.save_depth(zed, '../test/depth/{}'.format(count))
 
             # camera pose
             camera_pose = sl.Pose()
@@ -139,6 +150,8 @@ if __name__ == '__main__':
                 print('RotMat to Euler angle', rotationMatrixToEulerAngles(rot_matrix.r))
                 print('====================================')
 
+        else:
+            break
 
     cv2.destroyAllWindows()
     zed.disable_spatial_mapping()
