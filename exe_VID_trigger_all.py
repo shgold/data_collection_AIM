@@ -91,11 +91,11 @@ def run_process4video(process):
 
         # Clean P20 camera folder
         adb.clean_camera_folder()
-        time.sleep(__ADJUST_TIME__ + 0.5)
+        time.sleep(__ADJUST_TIME__ )
         capture_P20_video()
 
     elif process == 'D5':
-        time.sleep(__ADJUST_TIME__ + 1)
+        time.sleep(__ADJUST_TIME__ + 0.5)
         capture_D5_video()
     else:
         print('nothing to run')

@@ -39,7 +39,7 @@ def configure_zed_camera(img_capture=True, svo_file=None):
     init_params.enable_right_side_measure = True
     init_params.sdk_verbose=True
 
-    if img_capture:
+    if not img_capture:
         init_params.camera_resolution = sl.RESOLUTION.RESOLUTION_HD1080
         init_params.camera_fps = 30
         init_params.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_NONE

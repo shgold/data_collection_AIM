@@ -52,8 +52,10 @@ def read_log_file(log_file, file_dir, is_video=False):
                 if is_filename:
                     if 'IMAGE:D5' in line:
                         d5_dir=[]
-                        d5_dir.append(os.path.join(file_dir, 'D5/{}.JPG'.format(last_entry[:-1])))
-                        d5_dir.append(os.path.join(file_dir, 'D5/{}.CR2'.format(last_entry[:-1])))
+                        d5_jpg_file_name = line.split(':')[-1][:-1]
+                        d5_raw_file_name = line.split(':')[-2]
+                        d5_dir.append(os.path.join(file_dir, 'D5/{}'.format(d5_jpg_file_name)))
+                        d5_dir.append(os.path.join(file_dir, 'D5/{}'.format(d5_raw_file_name)))
 
                     if 'IMAGE:P20' in line:
                         p20_dir =[]
@@ -63,7 +65,7 @@ def read_log_file(log_file, file_dir, is_video=False):
                         p20_dir.append(os.path.join(file_dir, 'P20/{}'.format(p20_raw_file_name)))
 
                     if 'IMAGE:ZED' in line:
-                        zed_dir = os.path.join(file_dir, 'ZED/{}'.format(last_entry[:-1]))
+                        zed_dir = os.path.join(file_dir, 'ZED/{}/'.format(last_entry[:-1]))
                     count += 1
                     if count == 3:
                         if all([d5_dir, p20_dir, zed_dir]):

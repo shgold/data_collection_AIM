@@ -110,11 +110,11 @@ def capture_D5_image():
 
     d5_stdout=canon.capture_image_and_download(__D5_IMG_PATH__)
     d5_stdout = d5_stdout.split('\n')[-2]
-    d5_img_name = d5_stdout.split('/')[-1]
+    d5_img_name = d5_stdout.split('/')[-1][:-4]
 
     time_period = time.time() - starting_time
     print('[{:.3f}s] exiting D5'.format(time_period))
-    img_logger.info('IMAGE:D5:{}'.format(d5_img_name))
+    img_logger.info('IMAGE:D5:{}:{}'.format(d5_img_name+'.JPG', d5_img_name+'.CR2'))
 
 
 if __name__ == '__main__':

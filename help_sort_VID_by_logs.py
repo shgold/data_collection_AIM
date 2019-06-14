@@ -3,7 +3,7 @@ import os
 import time
 import pyzed.sl as sl
 import ffmpeg
-from shutil import copy2
+from shutil import copy2, copytree
 import argparse
 
 
@@ -17,12 +17,24 @@ input_dir = './saved_data/VID/{}/'.format(time.strftime('%Y%m%d'))
 output_dir = './saved_data/VID/{}/frames'.format(time.strftime('%Y%m%d'))
 log_dir = './saved_data/VID/{}/video_capture.log'.format(time.strftime('%Y%m%d'))
 
+def copy_folders(src_dir, dest_dir):
+    dir_basename = os.path.basename(src_dir)
 
-def put_videos_pairs_in_folder(pair_list, dest_folder):
+    dest_dir = os.path.join(dest_dir, dir_basename)
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+
+    for files in os.listdir(src_dir):
+        file_dir = os.path.join(src_dir, files)
+        copy2(file_dir, dest_dir)
+
+
+
+def put_videos_pairs_in_folder(pair_list, dest_folder, set_count):
     list_num_total = len(pair_list)
 
     for i, pair in enumerate(pair_list):
-        temp_folder = os.path.join(dest_folder, 'set{}'.format(i))
+        temp_folder = os.path.join(dest_folder, 'set{}/'.format(i+set_count))
         if not os.path.exists(temp_folder):
             os.makedirs(temp_folder)
         print('Copying {}th pair out of {} pairs'.format(i, list_num_total))
@@ -33,11 +45,11 @@ def put_videos_pairs_in_folder(pair_list, dest_folder):
     print(magenta('Finishing copying videos in pairs'))
 
 
-def put_images_pairs_in_folder(pair_list, dest_folder):
+def put_images_pairs_in_folder(pair_list, dest_folder, set_count):
     list_num_total = len(pair_list)
 
     for i, pair in enumerate(pair_list):
-        temp_folder = os.path.join(dest_folder, 'set{}'.format(i))
+        temp_folder = os.path.join(dest_folder, 'set{}'.format(i+set_count))
         if not os.path.exists(temp_folder):
             os.makedirs(temp_folder)
         print('Copying {}th pair out of {} pairs'.format(i, list_num_total))
@@ -45,7 +57,7 @@ def put_images_pairs_in_folder(pair_list, dest_folder):
         copy2(pair[0][1], temp_folder)    # D5 cv2
         copy2(pair[1][0], temp_folder) # p20 jpg
         copy2(pair[1][1], temp_folder) # p20 dng
-        copy2(pair[2], temp_folder)    # zed folders
+        copy_folders(pair[2], temp_folder)    # zed folders
 
     print(magenta('Finishing copying images in pairs'))
 
@@ -78,10 +90,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", type=str, help="A date(in YYmmDD format) which you want to process.(example: 20190612)")
     parser.add_argument("--mode", type=str, help="Which dataset that you want to sort out. [IMG | VID]")
+    parser.add_argument('--set_continue', default= 0, type=int, help='Continue to create the set from this number.')
     args = parser.parse_args()
 
     date= args.date
     mode = args.mode
+    set_count = args.set_continue
+
     if mode != 'IMG' and mode !='VID':
         print(red('Please choose the mode between [ IMG | VID ]'))
         exit(-1)
@@ -95,7 +110,7 @@ if __name__ == '__main__':
         # list is in [D5, P20, ZED] order
         list_vid_dir = logutils.read_log_file(__LOG_FILE__, __INPUT_DIR__, is_video=True)
 
-        put_videos_pairs_in_folder(list_vid_dir, __OUTPUT_DIR__)
+        put_videos_pairs_in_folder(list_vid_dir, __OUTPUT_DIR__, set_count)
 
         make_svo2avi(__OUTPUT_DIR__)
 
@@ -107,7 +122,7 @@ if __name__ == '__main__':
         # list is in [D5, P20, ZED] order
         list_vid_dir = logutils.read_log_file(__LOG_FILE__, __INPUT_DIR__, is_video=False)
 
-        put_images_pairs_in_folder(list_vid_dir, __OUTPUT_DIR__)
+        put_images_pairs_in_folder(list_vid_dir, __OUTPUT_DIR__, set_count)
 
     print('Done!')
 

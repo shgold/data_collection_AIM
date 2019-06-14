@@ -105,7 +105,7 @@ def press_shutter_button():
     if DEBUG: print('[p20] press_camera_button'.ljust(20), clock())
     call(['adb', 'shell', 'input', 'keyevent', 'KEYCODE_CAMERA'])
 
-def download_video_file(path, timeout=5):
+def download_video_file(path, timeout=10):
     # looking for last file in DCIM/Camera: NO NEED cause we just have 1 picture (clear folder before capture)
     # copy to PC: adb pull /sdcard/DCIM/Camera/ c:/temp
     if DEBUG: print('screen transfer_img'.ljust(20), clock())
@@ -114,12 +114,12 @@ def download_video_file(path, timeout=5):
     while time() - start < timeout:
         if filename is None:
             try:
-                files = check_output(['adb', 'shell', 'ls', '/storage/emulated/0/DCIM/Camera/*.mp4'])
-                print('check:', files.strip())
+                files = check_output(['adb', 'shell', 'ls', '/storage/emulated/0/DCIM/Camera/*.mp4'], stderr=DEVNULL)
+                #print('check:', files.strip())
             except:
                 continue
-            filename = os.path.basename(files.strip().decode('utf-8').split('.mp4'))
-            print('vid:', filename)
+            filename = os.path.basename(files.strip().decode('utf-8').split('.mp4')[0])
+            #print('vid:', filename)
 
         if filename is not None:
             r = check_output(['adb', 'pull', os.path.join(__CAMERA_PATH__, filename + '.mp4'), path])
