@@ -18,13 +18,13 @@ if __name__ == '__main__':
     if args.vid_time is None: # Capture images
         # Set parameters
         __ZED_IMG_PATH__ = args.out_path
-        __VID_LOGGING_FILE__ = args.log_file
+        __IMG_LOGGING_FILE__ = args.log_file
         __ADJUST_TIME__ = int(args.adjust_time)
 
         # Create logger
-        img_logger = logutils.create_logger(__VID_LOGGING_FILE__)
+        img_logger = logutils.create_logger(__IMG_LOGGING_FILE__)
 
-        # Configure zed camera
+        # Configure zed camera and open it
         zed, runtime = zutils.configure_zed_camera()
 
         # Time to adjust ZED camera to the lights
@@ -53,6 +53,11 @@ if __name__ == '__main__':
             print('[{:.3f}s] exiting ZED'.format(time_period))
             img_logger.info('IMAGE:ZED:{}'.format(str(img_folder)[:10]))
 
+        # Close zed
+        zed.disable_spatial_mapping()
+        zed.disable_tracking()
+        zed.close()
+
     else: # Record videos
         # Set parameters
         __ZED_VID_PATH__ = args.out_path
@@ -63,8 +68,8 @@ if __name__ == '__main__':
         # Create logger
         vid_logger = logutils.create_logger(__VID_LOGGING_FILE__)
 
-        # Configure zed camera
-        zed, runtime = zutils.configure_zed_camera(depth_mode=None)
+        # Configure zed camera and open it
+        zed, runtime = zutils.configure_zed_camera(img_capture=False)
 
         # Time to adjust ZED camera to the lights
         time.sleep(__ADJUST_TIME__)
@@ -84,7 +89,7 @@ if __name__ == '__main__':
         # Start recording videos
         while time.time() - starting_time <= __VID_TIME__:      # for frame_counts in range(30*__VID_TIME__+1):
             if zed.grab(runtime) == sl.ERROR_CODE.SUCCESS:
-                print('Current frame fps:', zed.get_current_fps())
+                #print('Current frame fps:', zed.get_current_fps())
                 zed.record()
 
         # Stop recording
@@ -93,7 +98,5 @@ if __name__ == '__main__':
         print('[{:.3f}s] exiting ZED'.format(time_period))
         vid_logger.info('VIDEO:ZED:{}'.format(zed_vid_name))
 
-    # Close zed
-    zed.disable_spatial_mapping()
-    zed.disable_tracking()
-    zed.close()
+        # Close zed
+        zed.close()

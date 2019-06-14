@@ -39,10 +39,6 @@ def read_log_file(log_file, file_dir, is_video=False):
                         d5_dir = os.path.join(file_dir, 'D5/{}'.format(last_entry[:-1]))
                     if 'VIDEO:P20' in line:
                         p20_dir = os.path.join(file_dir, 'P20/{}'.format(last_entry[:-1]))
-                        #p20_file_name = last_entry[:-1]
-                        #p20_dir = check_p20_file_directory(p20_file_name, file_dir, is_video)
-                        #p20_dir = os.path.join(file_dir, 'P20/Camera/{}.mp4'.format(last_entry[:-1]))
-
                     if 'VIDEO:ZED' in line:
                         zed_dir = os.path.join(file_dir, 'ZED/{}'.format(last_entry[:-1]))
                     count += 1
@@ -55,13 +51,19 @@ def read_log_file(log_file, file_dir, is_video=False):
             else: # for images
                 if is_filename:
                     if 'IMAGE:D5' in line:
-                        d5_dir = os.path.join(file_dir, 'D5/{}'.format(last_entry[:-1]))
+                        d5_dir=[]
+                        d5_dir.append(os.path.join(file_dir, 'D5/{}.JPG'.format(last_entry[:-1])))
+                        d5_dir.append(os.path.join(file_dir, 'D5/{}.CR2'.format(last_entry[:-1])))
+
                     if 'IMAGE:P20' in line:
-                        p20_file_name = last_entry[:-1]
-                        p20_dir = check_p20_file_directory(p20_file_name, file_dir, is_video)
-                        # p20_dir = os.path.join(file_dir, 'P20/Camera/{}.mp4'.format(last_entry[:-1]))
+                        p20_dir =[]
+                        p20_jpg_file_name = line.split(':')[-1][:-1]
+                        p20_raw_file_name = line.split(':')[-2]
+                        p20_dir.append(os.path.join(file_dir, 'P20/{}'.format(p20_jpg_file_name)))
+                        p20_dir.append(os.path.join(file_dir, 'P20/{}'.format(p20_raw_file_name)))
+
                     if 'IMAGE:ZED' in line:
-                        zed_dir = os.path.join(file_dir, 'ZED/{}/zed_left.png'.format(last_entry[:-1]))
+                        zed_dir = os.path.join(file_dir, 'ZED/{}'.format(last_entry[:-1]))
                     count += 1
                     if count == 3:
                         if all([d5_dir, p20_dir, zed_dir]):

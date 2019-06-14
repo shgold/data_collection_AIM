@@ -15,24 +15,37 @@ import cv2
 # depth_format = sl.DEPTH_FORMAT.DEPTH_FORMAT_PNG
 
 
-def configure_zed_camera(depth_mode='ultra', svo_file=None):
+def configure_zed_camera(img_capture=True, svo_file=None):
+    '''
+        Configure zed camera according to the capturing mode.
+        - When capturing images, it will be configured in 2k@15fps + DEPTH_MODE_ULTRA.
+            Also position tracking/spatial mapping will be enabled to store camera's parameters.
+        - When capturing videos, it will be configured in 1080HD@30fps + DEPTH_MODE_NONE.
+
+    :param img_capture: Flag of the image capturing mode. Default is True. When set False, it will configured as video capturing mode.
+    :param svo_file: When given as a .svo file, it will configured as reading file mode.
+    :return: configured zed camera object, runtime parameters
+
+    '''
     # Create a Camera object
     zed = sl.Camera()
 
     # Create a InitParameters object and set configuration parameters
     init_params = sl.InitParameters()
-    init_params.camera_resolution=sl.RESOLUTION.RESOLUTION_HD2K
-    #init_params.camera_fps=30
     init_params.coordinate_units=sl.UNIT.UNIT_MILLIMETER
-                                    # coordinate_system=sl.COORDINATE_SYSTEM.COORDINATE_SYSTEM_RIGHT_HANDED_Y_UP,
+    # init_params.coordinate_system=sl.COORDINATE_SYSTEM.COORDINATE_SYSTEM_RIGHT_HANDED_Y_UP,
     init_params.camera_disable_self_calib = False
     init_params.depth_minimum_distance=0.5 #in meter
     init_params.enable_right_side_measure = True
     init_params.sdk_verbose=True
 
-    if depth_mode is None:
+    if img_capture:
+        init_params.camera_resolution = sl.RESOLUTION.RESOLUTION_HD1080
+        init_params.camera_fps = 30
         init_params.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_NONE
     else:
+        init_params.camera_resolution = sl.RESOLUTION.RESOLUTION_HD2K
+        init_params.camera_fps = 15
         init_params.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
 
     if svo_file is not None:
@@ -44,7 +57,7 @@ def configure_zed_camera(depth_mode='ultra', svo_file=None):
     if err != sl.ERROR_CODE.SUCCESS:
         exit(1)
 
-    if depth_mode is not None:
+    if img_capture:
         # Positional tracking needs to be enabled before using spatial mapping
         transform = sl.Transform()
         tracking_parameters=sl.TrackingParameters(transform)
