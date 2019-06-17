@@ -30,15 +30,27 @@ if __name__ == '__main__':
         # Time to adjust ZED camera to the lights
         time.sleep(__ADJUST_TIME__)
 
+        img_folder = str(time.time())[:10]
+        directory = os.path.join(__ZED_IMG_PATH__, str(img_folder)[:10] + '/')
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        # Enable svo recording
+        zed_raw_img_name = 'ZED_IMG_raw.svo'
+        err = zed.enable_recording(os.path.join(directory, zed_raw_img_name),
+                                   sl.SVO_COMPRESSION_MODE.SVO_COMPRESSION_MODE_LOSSLESS)
+        if err != sl.ERROR_CODE.SUCCESS:
+            print(repr(err))
+            exit(-1)
+
         if zed.grab(runtime) == sl.ERROR_CODE.SUCCESS:
             starting_time = time.time()
             print('{} starting zed'.format(starting_time))
 
+            zed.record()
+
             # Set the output directory and the filename
-            img_folder = zed.get_timestamp(sl.TIME_REFERENCE.TIME_REFERENCE_IMAGE)
-            directory = os.path.join(__ZED_IMG_PATH__, str(img_folder)[:10] + '/')
-            if not os.path.exists(directory):
-                os.makedirs(directory)
+            #img_folder = zed.get_timestamp(sl.TIME_REFERENCE.TIME_REFERENCE_IMAGE)
             filename = directory + 'zed'
 
             # Save the images and relevant information
@@ -54,6 +66,7 @@ if __name__ == '__main__':
             img_logger.info('IMAGE:ZED:{}'.format(str(img_folder)[:10]))
 
         # Close zed
+        zed.disable_recording()
         zed.disable_spatial_mapping()
         zed.disable_tracking()
         zed.close()

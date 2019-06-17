@@ -89,12 +89,31 @@ def eulerAnglesToRotationMatrix(theta):
 
     return R
 
+
+def plot_translation_values(translation):
+    x  = translation[0]
+    y = translation[1]
+    z = translation[2]
+
+    fig = plt.figure()
+    ax = plt.axes(projection='3d')
+
+    def update(frame):
+        x_data.append(datetime.now())
+        y_data.append(randrange(0, 100))
+        line.set_data(x_data, y_data)
+        figure.gca().relim()
+        figure.gca().autoscale_view()
+        return line,
+
+
+
 if __name__ == '__main__':
     global depth_sl_left
     print('Starting...')
 
     # Configure zed camera
-    zed, runtime = zutils.configure_zed_camera(svo_file='../zed_vid2k_20s_depthmodeNone2.svo')
+    zed, runtime = zutils.configure_zed_camera(svo_file='./saved_data/VID/20190615/sorted_part1/set17/ZED_VID_20190615152052.svo')
 
     cv2.namedWindow('rgb', cv2.WINDOW_NORMAL)
     cv2.namedWindow('depth', cv2.WINDOW_NORMAL)
@@ -121,10 +140,10 @@ if __name__ == '__main__':
             print(depth_left16.shape)
 
             cv2.imshow('rgb', rgb_cv_left)
-            cv2.imshow('depth', depth_left16)
+            cv2.imshow('depth', depth_cv_left)
             count+=1
             #zutils.save_unrectified_rgb_image(zed, '../test/unrectified/{}'.format(count))
-            zutils.save_rgb_image(zed, '../test/rectified/{}'.format(count))
+            #zutils.save_rgb_image(zed, '../test/rectified/{}'.format(count))
             #zutils.save_depth(zed, '../test/depth/{}'.format(count))
 
             # camera pose
@@ -138,17 +157,17 @@ if __name__ == '__main__':
 
             key = cv2.waitKey(10)
 
-            if key == 109: # key for 'm'
-                print('====================================')
-                print('Current frame fps:', zed.get_current_fps())
-                print('Euler angle', np.around(euler_angle, 3))
-                print('Orientation', np.around(orientation,3))
-                print('Translation', np.around(translation,3))
-                print('Rotation vector', np.around(rot_vector,3))
-                print('Rotation matrix', np.around(rot_matrix.r, 3))
-                print('Euler to RotMat', eulerAnglesToRotationMatrix(euler_angle))
-                print('RotMat to Euler angle', rotationMatrixToEulerAngles(rot_matrix.r))
-                print('====================================')
+            #if key == 109: # key for 'm'
+            print('===============frame [{}] =================='.format(count))
+            print('Current frame fps:', zed.get_current_fps())
+            print('Euler angle', np.around(euler_angle, 3))
+            print('Orientation', np.around(orientation,3))
+            print('Translation', np.around(translation,3))
+            print('Rotation vector', np.around(rot_vector,3))
+            print('Rotation matrix', np.around(rot_matrix.r, 3))
+            print('Euler to RotMat', eulerAnglesToRotationMatrix(euler_angle))
+            print('RotMat to Euler angle', rotationMatrixToEulerAngles(rot_matrix.r))
+            print('====================================')
 
         else:
             break

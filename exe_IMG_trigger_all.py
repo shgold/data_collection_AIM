@@ -45,11 +45,11 @@ def run_process4image(process):
     elif process == 'p20':
         # Clean P20 camera folder
         adb.clean_camera_folder()
-        time.sleep(__ADJUST_TIME__+0.3) # change the time according to the situation
+        time.sleep(__ADJUST_TIME__+0.5) # change the time according to the situation
         capture_P20_image()
 
     elif process == 'D5':
-        time.sleep(__ADJUST_TIME__+0.5) # change the time according to the situation
+        time.sleep(__ADJUST_TIME__+1) # change the time according to the situation
         capture_D5_image()
     else:
         print('nothing to run')
