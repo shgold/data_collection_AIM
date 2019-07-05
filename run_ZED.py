@@ -50,15 +50,17 @@ if __name__ == '__main__':
             zed.record()
 
             # Set the output directory and the filename
-            #img_folder = zed.get_timestamp(sl.TIME_REFERENCE.TIME_REFERENCE_IMAGE)
             filename = directory + 'zed'
-
             # Save the images and relevant information
-            zutils.save_depth(zed, filename)
-            zutils.save_rgb_image(zed, filename)
-            zutils.save_unrectified_rgb_image(zed, filename)
-            zutils.save_other_image(zed, filename)
             zutils.save_parameters(zed, filename)
+
+            ### When wanting to save image files at the time of collecting, uncomment this part.
+            ##----------
+            # zutils.save_depth(zed, filename)
+            # zutils.save_rgb_image(zed, filename)
+            # zutils.save_unrectified_rgb_image(zed, filename)
+            # zutils.save_other_image(zed, filename)
+            ##------------
 
             # Saving done!
             time_period = time.time() - starting_time

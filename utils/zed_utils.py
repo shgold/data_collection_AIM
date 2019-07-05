@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import pyzed.sl as sl
 import cv2
+import pickle
 
 # help_string = "[s] Save side by side image [d] Save Depth, [n] Change Depth format, [p] Save Point Cloud, [m] Change Point Cloud format, [q] Quit"
 # prefix_point_cloud = "Cloud_"
@@ -46,9 +47,10 @@ def configure_zed_camera(img_capture=True, svo_file=None):
     else:
         init_params.camera_resolution = sl.RESOLUTION.RESOLUTION_HD2K
         init_params.camera_fps = 15
-        init_params.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
+        init_params.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_NONE
 
     if svo_file is not None:
+        init_params.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
         init_params.svo_input_filename = str(svo_file)
         init_params.svo_real_time_mode = False  # Don't convert in realtime
 
@@ -57,7 +59,7 @@ def configure_zed_camera(img_capture=True, svo_file=None):
     if err != sl.ERROR_CODE.SUCCESS:
         exit(1)
 
-    if img_capture:
+    if svo_file is not None:
         # Positional tracking needs to be enabled before using spatial mapping
         transform = sl.Transform()
         tracking_parameters=sl.TrackingParameters(transform)
@@ -248,7 +250,20 @@ def save_parameters(zed, filename):
 
     with open(filename +'_param.txt', 'w') as file:
         file.write(str(cam_param))
+#    np.save(filename +'_param.npy', np.asarray(cam_param)
 
+
+def get_params_from_txt_file(txt_file):
+    with open(txt_file) as file:
+        content = file.read()
+
+    split_res = content.split('settings\': [')[1]
+    split_res = split_res.split(']')[0]
+    split_res = split_res.split(',')
+
+    params = [int(i) for i in split_res]
+
+    return params
 
 def get_depth_format_name(f):
     if f == sl.DEPTH_FORMAT.DEPTH_FORMAT_PNG:
