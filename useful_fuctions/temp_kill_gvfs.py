@@ -1,6 +1,14 @@
 import os
 import subprocess
 import signal
+'''
+    This script kills gvfsd process that blocks the remote control of DSLR from the computer.
+    Recommended to run this script when connecting DSLR to the computer. 
+    
+    HOW TO USE:
+    python3 temp_kill_gvfs.py 
+'''
+
 
 def killGphoto2Process():
     p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
