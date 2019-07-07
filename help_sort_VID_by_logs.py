@@ -12,11 +12,6 @@ import utils.log_utils as logutils
 import utils.zed_utils as zutils
 
 
-# Set input video and output directory
-input_dir = './saved_data/VID/{}/'.format(time.strftime('%Y%m%d'))
-output_dir = './saved_data/VID/{}/frames'.format(time.strftime('%Y%m%d'))
-log_dir = './saved_data/VID/{}/video_capture.log'.format(time.strftime('%Y%m%d'))
-
 def copy_folders(src_dir, dest_dir):
     dir_basename = os.path.basename(src_dir)
 
