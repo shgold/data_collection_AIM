@@ -3,87 +3,13 @@ import os
 import time
 import pyzed.sl as sl
 import ffmpeg
-from shutil import copy2, copytree, move
+from shutil import copy2, copytree
 import argparse
 
 
 from utils.print_utils import magenta, yellow, red
 import utils.log_utils as logutils
 import utils.zed_utils as zutils
-
-
-def move_folders(src_dir, dest_dir):
-    dir_basename = os.path.basename(src_dir)
-
-    dest_dir = os.path.join(dest_dir, dir_basename)
-    if not os.path.exists(dest_dir):
-        os.makedirs(dest_dir)
-
-    for files in os.listdir(src_dir):
-        file_dir = os.path.join(src_dir, files)
-        move(file_dir, dest_dir)
-
-
-
-def put_videos_pairs_in_folder(pair_list, dest_folder, set_count):
-    list_num_total = len(pair_list)
-
-    for i, pair in enumerate(pair_list):
-        temp_folder = os.path.join(dest_folder, 'set{}/'.format(i+set_count))
-        if not os.path.exists(temp_folder):
-            os.makedirs(temp_folder)
-        print('Moving {}th pair out of {} pairs'.format(i, list_num_total))
-        move(pair[0], temp_folder) # D5
-        move(pair[1], temp_folder) # P20
-        move(pair[2], temp_folder) # ZED
-
-    print(magenta('Finishing moving videos in pairs'))
-
-
-def put_images_pairs_in_folder(pair_list, dest_folder, set_count):
-    list_num_total = len(pair_list)
-
-    for i, pair in enumerate(pair_list):
-        temp_folder = os.path.join(dest_folder, 'set_ori{}'.format(i+set_count))
-        if not os.path.exists(temp_folder):
-            os.makedirs(temp_folder)
-        print('Moving {}th pair out of {} pairs'.format(i, list_num_total))
-
-        try:
-            move(pair[0][0], temp_folder)    # D5 jpg
-            move(pair[0][1], temp_folder)    # D5 cv2
-            move(pair[1][0], temp_folder) # p20 jpg
-            move(pair[1][1], temp_folder) # p20 dng
-            move_folders(pair[2], temp_folder)    # zed folders
-        except:
-            print(yellow('File does not exists '))
-            pass
-
-    print(magenta('Finishing moving images in pairs'))
-
-
-def make_svo2avi(out_folder_dir):
-    '''
-        Convert ZED .svo file into .avi file. in the same folder
-    :param sorted_folder_dir: A folder directory(ex. /sorted) where zed file is stored.
-    :return:
-    '''
-    for folder in os.listdir(out_folder_dir):
-
-        __SUB_DIR__ = os.path.join(out_folder_dir, folder)
-        files = os.listdir(__SUB_DIR__)
-
-        zed_vid_name = None
-        for f in files:
-            if '.svo' in f:
-                zed_vid_name = f.split('.svo')[0]
-
-        if zed_vid_name is not None:
-            svo_file = os.path.join(__SUB_DIR__, zed_vid_name + '.svo')
-            avi_file = os.path.join(__SUB_DIR__, zed_vid_name + '.avi')
-            os.system('python3 ZED_SVO_Export.py {} {} 1'.format(svo_file, avi_file))
-
-    print(magenta('Finishing converting svo videos to avi'))
 
 
 def make_svo2png(out_folder_dir):
@@ -136,6 +62,8 @@ def make_svo2png(out_folder_dir):
     print(magenta('Finishing converting svo images to png'))
 
 
+
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
@@ -154,31 +82,23 @@ if __name__ == '__main__':
         exit(-1)
 
     if mode == 'VID':
-        INPUT_DIR__ = './saved_data/VID/{}/'.format(date)
-        LOG_FILE__ = './saved_data/VID/{}/video_capture.log'.format(date)
-        OUTPUT_DIR__ = './saved_data/VID/{}/sorted'.format(date)
+        __INPUT_DIR__ = './saved_data/VID/{}/'.format(date)
+        __LOG_FILE__ = './saved_data/VID/{}/video_capture.log'.format(date)
+        __OUTPUT_DIR__ = './saved_data/VID/{}/sorted'.format(date)
 
-
-        # list is in [D5, P20, ZED] order
-        list_vid_dir = logutils.read_log_file(__LOG_FILE__, __INPUT_DIR__, is_video=True)
-
-        put_videos_pairs_in_folder(list_vid_dir, __OUTPUT_DIR__, set_count)
-
-        if args.convertSVO:
-            make_svo2avi(__OUTPUT_DIR__)
+        #
+        # # list is in [D5, P20, ZED] order
+        # list_vid_dir = logutils.read_log_file(__LOG_FILE__, __INPUT_DIR__, is_video=True)
+        #
+        # put_videos_pairs_in_folder(list_vid_dir, __OUTPUT_DIR__, set_count)
+        #
+        # if args.convertSVO:
+        #     make_svo2avi(__OUTPUT_DIR__)
 
     else: # images
         __INPUT_DIR__ = './saved_data/IMG/{}/'.format(date)
         __LOG_FILE__ = './saved_data/IMG/{}/image_capture.log'.format(date)
         __OUTPUT_DIR__ = './saved_data/IMG/{}/sorted'.format(date)
 
-        # list is in [D5, P20, ZED] order
-        list_vid_dir = logutils.read_log_file(__LOG_FILE__, __INPUT_DIR__, is_video=False)
 
-        put_images_pairs_in_folder(list_vid_dir, __OUTPUT_DIR__, set_count)
-
-        if args.convertSVO:
-            make_svo2png(__OUTPUT_DIR__)
-
-    print('Done!')
-
+        make_svo2png(__OUTPUT_DIR__)

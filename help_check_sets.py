@@ -28,7 +28,7 @@ class sorted_set_loader(object):
             os.makedirs(self.output_dir_discard)
 
         # Create set list from the input directory
-        self.set_list = os.listdir(input_dir)
+        self.set_list = sorted(os.listdir(input_dir))
 
         self.current_set = None
         self.prev_set = None
@@ -115,11 +115,17 @@ class sorted_set_loader(object):
         self.show_images('1')
         while True:
             key = cv2.waitKey()
+            if self.zed_depth_exist:
+                if chr(key) not in ['1', '2', '3', '4', '5']:
+                    print(red('Pressed key is {}'.format(chr(key))))
+                    break
+            else:
+                if chr(key) not in ['1', '2', '3']:
+                    print(red('Pressed key is {}'.format(chr(key))))
+                    break
+
             cv2.destroyAllWindows()
             self.show_images(chr(key))
-            if chr(key) not in ['1', '2', '3', '4', '5']:
-                print('Pressed key is ', chr(key))
-                break
 
         return key
 
@@ -141,11 +147,16 @@ class sorted_set_loader(object):
         zed_rgb_right = cv2.imread(os.path.join(self.input_dir, current_set, zed_rgb_right[0]))
         self.zed_rgb = np.hstack([zed_rgb_left, zed_rgb_right])
 
-        zed_depth_left = cv2.imread(os.path.join(self.input_dir, current_set, zed_depth_left[0]))
-        zed_depth_right = cv2.imread(os.path.join(self.input_dir, current_set, zed_depth_right[0]))
-        self.zed_depth = np.hstack([zed_depth_left, zed_depth_right])
+        try:
+            zed_depth_left = cv2.imread(os.path.join(self.input_dir, current_set, zed_depth_left[0]))
+            zed_depth_right = cv2.imread(os.path.join(self.input_dir, current_set, zed_depth_right[0]))
+            self.zed_depth = np.hstack([zed_depth_left, zed_depth_right])
 
-        self.zed_confidence_img = cv2.imread(os.path.join(self.input_dir, current_set, zed_confidence[0]))
+            self.zed_confidence_img = cv2.imread(os.path.join(self.input_dir, current_set, zed_confidence[0]))
+
+            self.zed_depth_exist = True
+        except:
+            self.zed_depth_exist = False
 
     def show_images(self, key):
         if key == '1':

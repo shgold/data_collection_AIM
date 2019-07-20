@@ -29,6 +29,7 @@ def press_shutter_button():
 def capture_image_and_download(directory, count=0):
     if DEBUG: print('[Canon] capture and download to'.ljust(20), clock())
     r = check_output(['gphoto2', '--capture-image-and-download', '--filename', os.path.join(directory, '%f.%C')])
+    #r = check_output(['gphoto2', '--capture-image-and-download', '--filename', os.path.join('./tempD5', '%f.%C')])
     #msg = r.strip().decode('utf8')
     # img_name ='d5_IMG_{}.%C'.format(count)
     if DEBUG: print(r.strip().decode('utf8'))
