@@ -97,10 +97,10 @@ The structure of the data will be like following.
     ├── VID                    
     │   ├── 20190610                               # Date of data collection
     |   │   ├── D5                                 # Videos captured from Canon D5 Mark IV 
-    |   |   |   ├── CD5_0123.CR2                   # MPEG video
+    |   |   |   ├── CD5_0123.MOV                   # MPEG video
     |   |   |   └── ...
     │   |   ├── P20                                # Videos captured from Huawei P20
-    |   |   |   ├── VID_20190610_122402.mpeg       # MPEG video
+    |   |   |   ├── VID_20190610_122402.mp4       # MPEG video
     |   |   |   └── ...
     |   |   ├── ZED                                # Videos captured from ZED stereo camera
     |   |   |   ├── ZED_VID_20190610122402.svo     # RAW data from the ZED camera
