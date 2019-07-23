@@ -49,8 +49,8 @@ def extract_zed_svofile(svo_input_path, other_frames=None):
     depth_image = sl.Mat()
 
     rt_param = sl.RuntimeParameters()
-    rt_param.sensing_mode = sl.SENSING_MODE.SENSING_MODE_FILL
-    print(zed.get_camera_fps)
+    rt_param.sensing_mode = sl.SENSING_MODE.SENSING_MODE_STANDARD
+
     # Start SVO conversion to AVI/SEQUENCE
     sys.stdout.write("Converting SVO... Use Ctrl-C to interrupt conversion.\n")
 
@@ -136,18 +136,28 @@ def extract_canon_videos(canon_input_path):
 
 if __name__ == "__main__":
 
-    base_dir ="/media/sokim/Samsung_T5/VID/20190615/sorted_part1/set2/ZED_VID_20190615123103.svo"
+    __INPUT_DIR__ = '/media/dc2019/My Book/VID/RAW/training/'
 
-    files = os.listdir(base_dir)
-    zed_vid_dir = None
-    canon_vid_dir = None
-    for f in files:
-        if '.svo' in f:
-            zed_vid_dir= os.path.join(base_dir, f)
-        elif '.MOV' in f:
-            canon_vid_dir = os.path.join(base_dir, f)
+    set_list = os.listdir(__INPUT_DIR__)
 
-    extract_zed_svofile(zed_vid_dir)
-    extract_canon_videos(canon_vid_dir)
+    for set in set_list:
+        print('===> Converting videos in {}'.format(set))
+        base_dir = os.path.join(__INPUT_DIR__, set)
+
+        if len(os.listdir(base_dir)) == 5:
+            print('passing...{}'.format(set))
+            continue
+
+        files = os.listdir(base_dir)
+        zed_vid_dir = None
+        canon_vid_dir = None
+        for f in files:
+            if '.svo' in f:
+                zed_vid_dir= os.path.join(base_dir, f)
+            elif '.MOV' in f:
+                canon_vid_dir = os.path.join(base_dir, f)
+
+        extract_zed_svofile(zed_vid_dir)
+        extract_canon_videos(canon_vid_dir)
 
     

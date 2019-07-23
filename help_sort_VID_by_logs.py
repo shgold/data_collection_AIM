@@ -154,10 +154,13 @@ if __name__ == '__main__':
         exit(-1)
 
     if mode == 'VID':
-        INPUT_DIR__ = './saved_data/VID/{}/'.format(date)
-        LOG_FILE__ = './saved_data/VID/{}/video_capture.log'.format(date)
-        OUTPUT_DIR__ = './saved_data/VID/{}/sorted'.format(date)
+        #__INPUT_DIR__ = './saved_data/VID/{}/'.format(date)
+        #__LOG_FILE__ = './saved_data/VID/{}/video_capture.log'.format(date)
+        #__OUTPUT_DIR__ = './saved_data/VID/{}/sorted'.format(date)
 
+        __INPUT_DIR__ = '/media/dc2019/My Book/VID/{}/'.format(date)
+        __LOG_FILE__ = '/media/dc2019/My Book/VID/{}/video_capture.log'.format(date)
+        __OUTPUT_DIR__ = '/media/dc2019/My Book/VID/{}/sorted'.format(date)
 
         # list is in [D5, P20, ZED] order
         list_vid_dir = logutils.read_log_file(__LOG_FILE__, __INPUT_DIR__, is_video=True)
