@@ -110,7 +110,7 @@ def extract_canon_videos(canon_input_path):
     print("Total number of frames is {:.0f}".format(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
     print("The FPS is {:.0f}".format(cap.get(cv2.CAP_PROP_FPS)))
 
-    frame_number = 0
+    frame_number = 1
     nb_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 
     while (cap.isOpened()):

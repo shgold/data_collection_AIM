@@ -29,7 +29,7 @@ def put_videos_pairs_in_folder(pair_list, dest_folder, set_count):
     list_num_total = len(pair_list)
 
     for i, pair in enumerate(pair_list):
-        temp_folder = os.path.join(dest_folder, 'set{}/'.format(i+set_count))
+        temp_folder = os.path.join(dest_folder, 'set_ori{}/'.format(i+set_count))
         if not os.path.exists(temp_folder):
             os.makedirs(temp_folder)
         print('Moving {}th pair out of {} pairs'.format(i, list_num_total))
