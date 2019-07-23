@@ -113,7 +113,7 @@ The structure of the data will be like following.
 
 ## Other useful functions
 ### 1. sorting the data in one folder
-After collecting data, using `help_sort_data_by_logs.py` script will help you pairing the data in seperate folders. For example, [saved_data/20190611/sorted/set1], [saved_data/20190611/sorted/set2], and so on. 
+After collecting data, using `help_sort_data_by_logs.py` script will help you pairing the data in seperate folders. For example, [saved_data/20190611/sorted/set_ori1], [saved_data/20190611/sorted/set_ori2], and so on. 
   ```
   $ python3 help_sort_data_by_logs.py --date 20190623 --mode IMG --set_continue 0 --convertSVO
   ```
@@ -122,7 +122,17 @@ After collecting data, using `help_sort_data_by_logs.py` script will help you pa
   - `set_continue` is the starting number of the newly paired folders. The default is 0.
   - `converSVO` is the flag which converts ZED's .svo file into .png(if mode is IMG) or .avi(if mode is VID).
   
-### 2. TBA
+### 2. Checking images easily
+Explain here
+
+### 3. Converting Videos to Frames
+You can use `/useful_functions/temp_vids_to_frames.py` script to conver videos into frames(in .png format). It requires opencv2 library and ZED python API to run this script successfully. 
+- You have to define `__INPUT_DIR__` as a top folder which stores the `set_ori[NR]`. 
+- It will create `zed_frames` and `canon_frames` under the same `set_ori[NR]` folders. 
+```
+$ python3 temp_vids_to_frames.py 
+```
+
   
 
 ## Common troubleshootings
