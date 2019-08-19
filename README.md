@@ -67,7 +67,7 @@ In order to capture images, first set up the devices properly and make sure that
 
 ### 3. Saved data structure
 All the recorded data will be saved in the `saved_data` folder in the same directory of this repository. 
-The structure of the data will be like following. 
+The structure of the data will be like following. The samples of collection can be found here[https://drive.google.com/open?id=1akDe3CLvYv9Q2xR7x9JXaXx_grCWOU9y]
 
 
     saved_data
