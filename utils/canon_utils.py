@@ -45,20 +45,23 @@ def take_video_and_download(directory, time=12):
     :return:
     '''
     if DEBUG: print('[Canon] take video and download to'.ljust(20), clock())
-    r= check_output(['gphoto2', '--set-config', 'viewfinder=1',
-                   '--set-config', 'movierecordtarget=0',
-                   '--wait-event', str(time)+'s', '--set-config',
-                   'movierecordtarget=1', '--wait-event-and-download=2s',
-                   '--filename',os.path.join(directory, '%f.%C')]) #''d5_VID_{}.%C'.format(count))])
-    if DEBUG: print(r)
+    filespec = os.path.join(directory, "%f.%C")
+    cmdline = ["gphoto2",
+               "--set-config", "viewfinder=1",
+               "--set-config", "capturetarget='Memory card'",
+               "--set-config", "movierecordtarget=Card",
+               "--wait-event", f"{time:.0f}s",
+               "--set-config", "movierecordtarget=None",
+               "--wait-event-and-download", "2s",
+               "--filename", f"{filespec}"]
+    if DEBUG: print(cmdline)
+    r = check_output(cmdline)
+    if DEBUG: print(r.decode('utf8'))
 
     return r.strip().decode('utf8')
 
 
-def chcek_camera_summary():
+def check_camera_summary():
     if DEBUG: print('[Canon] Camera summary'.ljust(20), clock())
     r = check_output(['gphoto2', '--summary'])
     if DEBUG: print(r.strip())
-
-
-
