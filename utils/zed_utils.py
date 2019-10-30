@@ -16,7 +16,7 @@ import pickle
 # depth_format = sl.DEPTH_FORMAT.DEPTH_FORMAT_PNG
 
 
-def configure_zed_camera(img_capture=True, svo_file=None):
+def configure_zed_camera(img_capture=True, svo_file=None, depth_mode='ULTRA'):
     '''
         Configure zed camera according to the capturing mode.
         - When capturing images, it will be configured in 2k@15fps + DEPTH_MODE_ULTRA.
@@ -50,7 +50,11 @@ def configure_zed_camera(img_capture=True, svo_file=None):
         init_params.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_NONE
 
     if svo_file is not None:
-        init_params.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
+        if depth_mode == 'ULTRA':
+            init_params.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
+        elif depth_mode == 'PERFORMANCE':
+            init_params.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_PERFORMANCE
+        #init_params.coordinate_system = sl.COORDINATE_SYSTEM.COORDINATE_SYSTEM_RIGHT_HANDED_Y_UP
         init_params.svo_input_filename = str(svo_file)
         init_params.svo_real_time_mode = False  # Don't convert in realtime
 

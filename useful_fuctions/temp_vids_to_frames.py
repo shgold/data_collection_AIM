@@ -136,7 +136,7 @@ def extract_canon_videos(canon_input_path):
 
 if __name__ == "__main__":
 
-    __INPUT_DIR__ = '/media/dc2019/My Book/VID/RAW/training/'
+    __INPUT_DIR__ = '/media/dc2019/My Book/VID/RAW/testing/'
 
     set_list = os.listdir(__INPUT_DIR__)
 
@@ -157,7 +157,7 @@ if __name__ == "__main__":
             elif '.MOV' in f:
                 canon_vid_dir = os.path.join(base_dir, f)
 
-        extract_zed_svofile(zed_vid_dir)
+        #extract_zed_svofile(zed_vid_dir)
         extract_canon_videos(canon_vid_dir)
 
     

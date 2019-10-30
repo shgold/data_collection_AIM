@@ -52,13 +52,13 @@ def copy_frames_to(cmd):
 
 if __name__ == "__main__":
 
-    __INPUT_DIR__ = '/media/dc2019/My Book/VID/RAW/training/'
-    __OUTPUT_DIR__ = '/media/dc2019/My Book/VID/'
+    __INPUT_DIR__ = '/media/dc2019/My Book/VID/RAW/testing_this/'#'/media/dc2019/My Book/VID/00_RAW/test/'
+    __OUTPUT_DIR__ = '/media/dc2019/My Book/VID/VQM_data'
     target_sec = 50 # target seconds for the video
 
     set_continue = 50
     val_set_continue = 16
-    test_set_continue = 11
+    test_set_continue = 14
 
     set_list = sorted(os.listdir(__INPUT_DIR__))
 
